@@ -6,7 +6,7 @@ typedef struct {
     char nome[50];
     char cpf[15];
     int idMedico;
-    char estado[20];
+    int estado;
 } Paciente;
 
 void cadastrarPacientes();
