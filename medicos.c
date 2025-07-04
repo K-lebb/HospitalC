@@ -16,7 +16,7 @@ void cadastrarMedico() {
     scanf("%s", medico.crm);
 
     printf("O médio está de plantão: [s][n]");
-    scanf("%c", servico);
+    scanf("%s", servico);
 
     if (servico == 's'){
         medico.plantao = true;
