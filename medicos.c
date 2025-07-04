@@ -16,7 +16,7 @@ void cadastrarMedico() {
     scanf("%s", medico.crm);
 
     printf("O médio está de plantão: [s][n]");
-    scanf("%s", servico);
+    scanf("%c", &servico);
 
     if (servico == 's'){
         medico.plantao = true;
@@ -26,7 +26,7 @@ void cadastrarMedico() {
 
     printf("Médico cadastrado com sucesso!\n");
 
-    FILE *arq = fopen("bancoDeDados.txt", "a");
+    FILE *arq = fopen("registroMedico.txt", "a");
 
     if (arq == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -63,7 +63,7 @@ Medico BuscarPorID(const char *nomeArquivo, const char *idBuscado){
 
         strcpy(linhaCopia, linha);
 
-        token = strtok(linhaCopia, ";");
+        token = strtok(linhaCopia, ";"a);
 
         if (token != NULL && strcmp(linhaCopia, idBuscado) == 0){
             printf("Pessoa encontrada");

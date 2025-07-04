@@ -24,7 +24,7 @@ void cadastrarPacientes() {
 
     printf("Paciente cadastrado com sucesso!\n");
 
-    FILE *arq = fopen("bancoDeDados.txt", "a");
+    FILE *arq = fopen("registroPaciente.txt", "a");
 
     if (arq == NULL) {
         printf("Erro ao abrir o arquivo.\n");
