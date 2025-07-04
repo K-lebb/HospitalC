@@ -13,7 +13,7 @@ int main() {
     switch (opcaoAtendente) {
         case 1:
             printf("Escolha uma operação:\n");
-            printf("1 - Cadastrar paciente\n2 - Consultar por ID\n3 - Modificar\n4 - Apagar\n");
+            printf(" 1 - Cadastrar paciente\n 2 - Consultar por ID\n 3 - Modificar\n 4 - Apagar\n");
             scanf("%d", &operacao);
 
             if (operacao == 1) {
@@ -33,7 +33,7 @@ int main() {
         case 2:
 
             printf("Escolha uma operação:\n");
-            printf("1 - Cadastrar médico\n2 - Consultar por ID\n3 - Modificar\n4 - Apagar\n");
+            printf(" 1 - Cadastrar médico\n 2 - Consultar por ID\n 3 - Modificar\n 4 - Apagar\n");
             scanf("%d", &operacao);
 
             if (operacao == 1) {
@@ -42,7 +42,7 @@ int main() {
                 char idBuscado[50];
                 printf("Digite o ID do médico que deseja buscar: ");
                 scanf("%s", idBuscado);
-                Medico medicoEncontrado = BuscarMedicoPorID("registroMedico.txt", idBuscado);
+                Medico medicoEncontrado = buscarMedicoPorID("registroMedico.txt", idBuscado);
                 if (medicoEncontrado.id != 0) {
                     printf("Médico encontrado:\n");
                     printf("Nome: %s\n", medicoEncontrado.nome);
@@ -54,7 +54,12 @@ int main() {
                 }
                 
             } else if (operacao == 3) {
-                
+                char idBuscado[50];
+                printf("Digite o ID do médico que deseja modificar: ");
+                scanf("%s", idBuscado);
+
+                Medico medicoAlterado = modificarMedico("registroMedico.txt", idBuscado);
+
             } else if (operacao == 4) {
 
             } else {

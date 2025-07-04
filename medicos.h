@@ -11,6 +11,7 @@ typedef struct {
 
 void cadastrarMedico();
 void listarMedicos();
-Medico BuscarMedicoPorID(const char *nomeArquivo, const char *idBuscado);
+Medico buscarMedicoPorID(const char *nomeArquivo, const char *idBuscado);
+Medico modificarMedico(const char *nomeArquivo, const char *idBuscado);
 
 #endif

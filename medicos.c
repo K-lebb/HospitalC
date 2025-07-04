@@ -36,7 +36,7 @@ void cadastrarMedico() {
     printf("Médico cadastrado com sucesso! ID gerado: %s\n", medico.id);
 }
 
-Medico BuscarMedicoPorID(const char *nomeArquivo, const char *idBuscado) {
+Medico buscarMedicoPorID(const char *nomeArquivo, const char *idBuscado) {
     Medico resultado = {"", "", "", false};
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
@@ -86,4 +86,26 @@ void listarMedicos(const char *nomeArquivo) {
         }
     }
     fclose(arquivo);
+}
+
+Medico modificarMedico(const char *nomeArquivo, const char *idBuscado){
+    char alterar;
+    Medico medicoModificado = buscarMedicoPorID(nomeArquivo, idBuscado);
+
+    if(strcmp(medicoModificado.id, "") == 0){
+        printf("Não foi encontrado nenhum médico com esse ID");
+        abort();
+    }
+
+    printf("Você deseja alterar os dados do Dr %s?: [s/n] \n",medicoModificado.nome);
+    scanf(" %c", &alterar); 
+
+    if (alterar == 'n') {
+    printf("Então vou encerrar a modificação por aqui! \n");
+    abort();
+}
+
+    
+
+    
 }

@@ -20,7 +20,7 @@ void cadastrarPacientes() {
     printf("Digite o ID do médico responsável pelo paciente: ");
     scanf("%s", paciente.idMedico);
 
-    Medico medicoEncontrado = BuscarMedicoPorID("registroMedico.txt", paciente.idMedico);
+    Medico medicoEncontrado = buscarMedicoPorID("registroMedico.txt", paciente.idMedico);
     if (medicoEncontrado.id[0] == '\0') {
         printf("Médico com ID %s não encontrado.\n", paciente.idMedico);
         printf("Por favor, cadastre o médico antes de cadastrar o paciente.\n");
