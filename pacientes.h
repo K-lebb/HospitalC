@@ -2,10 +2,10 @@
 #define PACIENTES_H
 
 typedef struct {
-    int id;
+    char id[50];
     char nome[50];
     char cpf[15];
-    int idMedico;
+    char idMedico[50];
     int estado;
 } Paciente;
 

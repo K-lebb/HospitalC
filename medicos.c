@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "medicos.h"
+#include "fila.h"
 
 static Medico medico;
 
@@ -13,63 +14,76 @@ void cadastrarMedico() {
     scanf(" %[^\n]", medico.nome);
 
     printf("Digite o CRM do médico: ");
-    scanf("%s", medico.crm);
+    scanf(" %[^\n]", medico.crm);
 
-    printf("O médio está de plantão: [s][n]");
-    scanf("%c", &servico);
+    printf("O médico está de plantão? [s/n]: ");
+    scanf(" %c", &servico);
+    medico.plantao = (servico == 's' || servico == 'S');
 
-    if (servico == 's'){
-        medico.plantao = true;
-    }else{
-        medico.plantao = false;
-    }
-
-    printf("Médico cadastrado com sucesso!\n");
+    int proximoID = gerarProximoID("registroMedico.txt");
+    sprintf(medico.id, "%d", proximoID);
 
     FILE *arq = fopen("registroMedico.txt", "a");
-
-    if (arq == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
+    if (!arq) {
+        perror("Erro ao abrir o arquivo");
         abort();
     }
 
-    fwrite(&medico, sizeof(Medico), 1, arq);
+    fprintf(arq, "%s;%s;%s;%d\n",
+            medico.id, medico.nome, medico.crm, medico.plantao ? 1 : 0);
     fclose(arq);
-    printf("Paciente salvo no arquivo bancoDeDados.txt\n");
+
+    printf("Médico cadastrado com sucesso! ID gerado: %s\n", medico.id);
 }
 
-Medico BuscarPorID(const char *nomeArquivo, const char *idBuscado){
-
+Medico BuscarMedicoPorID(const char *nomeArquivo, const char *idBuscado) {
+    Medico resultado = {"", "", "", false};
     FILE *arquivo = fopen(nomeArquivo, "r");
-    char linha[150];
-    Medico resultado = {"", "", 0, false};
-    
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo %s\n", nomeArquivo);
+    if (!arquivo) {
+        perror("Erro ao abrir o arquivo");
         return resultado;
     }
 
+    char linha[150];
     while (fgets(linha, sizeof(linha), arquivo)) {
-        char *nome, *crm, linhaCopia[150], *token;
-        int *id;
-        bool *plantao;
+        char *token = strtok(linha, ";\n");
+        if (token && strcmp(token, idBuscado) == 0) {
+            strcpy(resultado.id, token);
 
-        nome = resultado.nome;
-        crm = resultado.crm;
-        id = &resultado.id;
-        plantao = &resultado.plantao;
+            token = strtok(NULL, ";\n");
+            if (token) strcpy(resultado.nome, token);
 
-        linha[strcspn(linha, "\n")] = '\0';
+            token = strtok(NULL, ";\n");
+            if (token) strcpy(resultado.crm, token);
 
-        strcpy(linhaCopia, linha);
+            token = strtok(NULL, ";\n");
+            resultado.plantao = token && (strcmp(token, "1") == 0);
 
-        token = strtok(linhaCopia, ";"a);
-
-        if (token != NULL && strcmp(linhaCopia, idBuscado) == 0){
-            printf("Pessoa encontrada");
-            fclose(arquivo);
+            break;
         }
+    }
+    fclose(arquivo);
+    return resultado;
+}
 
-    } 
-    
+void listarMedicos(const char *nomeArquivo) {
+    FILE *arquivo = fopen(nomeArquivo, "r");
+    if (!arquivo) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
+    char linha[150];
+    Medico medico;
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        int plantaoInt;
+        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%d",
+                   medico.id, medico.nome, medico.crm, &plantaoInt) == 4) {
+            medico.plantao = (plantaoInt != 0);
+            printf("ID: %s\nNome: %s\nCRM: %s\nPlantao: %s\n\n",
+                   medico.id, medico.nome, medico.crm,
+                   medico.plantao ? "Sim" : "Nao");
+        }
+    }
+    fclose(arquivo);
 }

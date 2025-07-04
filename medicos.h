@@ -5,10 +5,12 @@
 typedef struct {
     char nome[50];
     char crm[50];
-    int id;
+    char id[50];
     bool plantao;
 } Medico;
 
 void cadastrarMedico();
+void listarMedicos();
+Medico BuscarMedicoPorID(const char *nomeArquivo, const char *idBuscado);
 
 #endif

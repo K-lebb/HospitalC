@@ -31,6 +31,7 @@ int main() {
             break;
 
         case 2:
+
             printf("Escolha uma operação:\n");
             printf("1 - Cadastrar médico\n2 - Consultar por ID\n3 - Modificar\n4 - Apagar\n");
             scanf("%d", &operacao);
@@ -38,6 +39,19 @@ int main() {
             if (operacao == 1) {
                 cadastrarMedico();
             } else if (operacao == 2) {
+                char idBuscado[50];
+                printf("Digite o ID do médico que deseja buscar: ");
+                scanf("%s", idBuscado);
+                Medico medicoEncontrado = BuscarMedicoPorID("registroMedico.txt", idBuscado);
+                if (medicoEncontrado.id != 0) {
+                    printf("Médico encontrado:\n");
+                    printf("Nome: %s\n", medicoEncontrado.nome);
+                    printf("CRM: %s\n", medicoEncontrado.crm);
+                    printf("ID: %s\n", medicoEncontrado.id);
+                    printf("Plantão: %s\n", medicoEncontrado.plantao ? "Sim" : "Não");
+                } else {
+                    printf("Médico não encontrado.\n");
+                }
                 
             } else if (operacao == 3) {
                 
