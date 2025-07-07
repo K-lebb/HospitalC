@@ -10,5 +10,9 @@ typedef struct {
 } Paciente;
 
 void cadastrarPacientes();
+void consultarPacientePorID();
+Paciente buscarPacientePorID(const char *nomeArquivo, const char *idBuscadoPaciente); 
+Paciente modificarPaciente(const char *nomeArquivo, const char *idBuscado);       
+void apagarPaciente(const char *nomeArquivo, const int idParaRemover);
 
 #endif

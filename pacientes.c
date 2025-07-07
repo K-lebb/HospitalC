@@ -50,3 +50,126 @@ void cadastrarPacientes() {
     printf("Paciente cadastrado com sucesso!\n");
     printf("Paciente salvo no arquivo registroPaciente.txt\n");
 }
+
+void consultarPacientePorID() {
+    char idBuscadoPaciente[50];
+    printf("Digite o ID do paciente que deseja buscar: ");
+    scanf("%s", idBuscadoPaciente);
+
+    Paciente pacienteEncontrado = buscarPacientePorID("registroPaciente.txt", idBuscadoPaciente);
+    if (pacienteEncontrado.id != 0) {
+        printf("Paciente encontrado:\n");
+        printf("ID: %s\n", pacienteEncontrado.id);
+        printf("Nome: %s\n", pacienteEncontrado.nome);
+        printf("CPF: %s\n", pacienteEncontrado.cpf);
+        printf("ID do Médico responsável: %s\n", pacienteEncontrado.idMedico);
+        printf("Estado do paciente: ");
+        if (pacienteEncontrado.estado == 3) {
+        printf("Grave");
+        } else if (pacienteEncontrado.estado == 2) {
+            printf("Moderado");
+        } else {
+            printf("Leve");
+        }
+    } else {
+        printf("Paciente não encontrado.\n");
+    }
+}
+
+Paciente buscarPacientePorID(const char *nomeArquivo, const char *idBuscado) {
+    char texto[50];
+    Paciente resultado = {"", "", "", "", 0};
+    FILE *arquivo = fopen(nomeArquivo, "r");
+    if (!arquivo) {
+        perror("Erro ao abrir o arquivo");
+        return resultado;
+    }
+
+    char linha[150];
+    while (fgets(linha, sizeof(linha), arquivo)) {
+
+        char *token = strtok(linha, ";\n");
+
+        if (token && strcmp(token, idBuscado) == 0) {
+
+            strcpy(resultado.id, token);
+            token = strtok(NULL, ";\n");
+            if (token) strcpy(resultado.nome, token);
+
+            token = strtok(NULL, ";\n");
+            if (token) strcpy(resultado.cpf, token);
+
+            token = strtok(NULL, ";\n");
+            if (token) strcpy(resultado.idMedico, token);
+
+            token = strtok(NULL, ";\n");
+            if (token) resultado.estado = atoi(token);
+
+            break;
+        }
+    }
+    fclose(arquivo);
+    return resultado;
+}
+
+Paciente modificarPaciente(const char *nomeArquivo, const char *idBuscado){
+    char alterar, servico;
+    Paciente pacienteModificado = buscarPacientePorID(nomeArquivo, idBuscado);
+
+    if(strcmp(pacienteModificado.id, "") == 0){
+        printf("Não foi encontrado nenhum paciente com esse ID");
+        abort();
+    }
+
+    printf("Você deseja alterar os dados do paciente %s?: [s/n] \n", pacienteModificado.nome);
+    scanf(" %c", &alterar); 
+
+    if (alterar == 'n') {
+    printf("Então vou encerrar a modificacao por aqui! \n");
+    abort();
+    }
+
+    printf("Digite o novo nome do paciente: \n");
+    scanf("%s", pacienteModificado.nome);
+}
+
+void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
+    FILE *arquivoOriginal = fopen(nomeArquivo, "r");
+    FILE *arquivoTemp = fopen("Temp.txt", "w");
+    
+    if (!arquivoOriginal || !arquivoTemp){
+        printf("Erro ao abrir");
+        system("pause");
+        abort();
+    }
+
+    char linha[1024];
+    char idStr[5];
+    int encontrou = 0;
+
+    while(fgets(linha, sizeof(linha), arquivoOriginal)){
+
+        if (sscanf(linha, "%5[^;]", idStr) == 1){
+
+        int idAtual = atoi(idStr);
+
+            if (idAtual != idParaRemover){
+
+            fputs(linha, arquivoTemp);
+        } else {
+            encontrou = 1;
+        }
+        }
+    }
+    fclose(arquivoOriginal);
+    fclose(arquivoTemp);
+
+    remove(nomeArquivo);
+    rename("Temp.txt", nomeArquivo);
+
+    if (encontrou){
+        printf("Paciente com id %d removido com sucesso.\n", idParaRemover);
+    } else {
+        printf("Paciente com id &d nao foi encontrado.\n", idParaRemover);
+    }
+}

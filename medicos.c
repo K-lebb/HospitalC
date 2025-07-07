@@ -46,6 +46,7 @@ Medico buscarMedicoPorID(const char *nomeArquivo, const char *idBuscado) {
 
     char linha[150];
     while (fgets(linha, sizeof(linha), arquivo)) {
+
         char *token = strtok(linha, ";\n");
         if (token && strcmp(token, idBuscado) == 0) {
             strcpy(resultado.id, token);
@@ -89,7 +90,7 @@ void listarMedicos(const char *nomeArquivo) {
 }
 
 Medico modificarMedico(const char *nomeArquivo, const char *idBuscado){
-    char alterar;
+    char alterar, servico;
     Medico medicoModificado = buscarMedicoPorID(nomeArquivo, idBuscado);
 
     if(strcmp(medicoModificado.id, "") == 0){
@@ -101,11 +102,58 @@ Medico modificarMedico(const char *nomeArquivo, const char *idBuscado){
     scanf(" %c", &alterar); 
 
     if (alterar == 'n') {
-    printf("Então vou encerrar a modificação por aqui! \n");
+    printf("Então vou encerrar a modificacao por aqui! \n");
     abort();
+    }
+
+    printf("Digite o novo nome do Dr: \n");
+    scanf("%s", medicoModificado.nome);
+
+    printf("Digite se o Dr estar de plantao [s/n]");
+    scanf("%c", servico);
+    medicoModificado.plantao = (servico == 's' || servico == 'S');
+
 }
 
+void apagarMedico(const char *nomeArquivo, const int idParaRemover){
+    FILE *arquivoOriginal = fopen(nomeArquivo, "r");
+    FILE *arquivoTemp = fopen("Temp.txt", "w");
     
+    if (!arquivoOriginal || !arquivoTemp){
+        printf("Erro ao abrir");
+        system("pause");
+        abort();
+    }
 
+    char linha[1024];
+    char idStr[5];
+    int encontrou = 0;
+
+    while(fgets(linha, sizeof(linha), arquivoOriginal)){
+
+        if (sscanf(linha, "%5[^;]", idStr) == 1){
+
+        int idAtual = atoi(idStr);
+
+            if (idAtual != idParaRemover){
+
+            fputs(linha, arquivoTemp);
+        } else {
+            encontrou = 1;
+            }
+        }
+    }
+    fclose(arquivoOriginal);
+    fclose(arquivoTemp);
+
+    remove(nomeArquivo);
+    rename("Temp.txt", nomeArquivo);
+
+    if (encontrou){
+        printf("Medico com id %d removido com sucesso.\n", idParaRemover);
+    } else {
+        printf("Medico com id &d nao foi encontrado.\n", idParaRemover);
+    }
+
+    }
     
-}
