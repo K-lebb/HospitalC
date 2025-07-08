@@ -62,7 +62,7 @@ void consultarPacientePorID() {
         printf("ID: %s\n", pacienteEncontrado.id);
         printf("Nome: %s\n", pacienteEncontrado.nome);
         printf("CPF: %s\n", pacienteEncontrado.cpf);
-        printf("ID do Médico responsável: %s\n", pacienteEncontrado.idMedico);
+        printf("ID do Médico responsável: %s \n", pacienteEncontrado.idMedico);
         printf("Estado do paciente: ");
         if (pacienteEncontrado.estado == 3) {
         printf("Grave");
@@ -80,6 +80,7 @@ Paciente buscarPacientePorID(const char *nomeArquivo, const char *idBuscado) {
     char texto[50];
     Paciente resultado = {"", "", "", "", 0};
     FILE *arquivo = fopen(nomeArquivo, "r");
+
     if (!arquivo) {
         perror("Erro ao abrir o arquivo");
         return resultado;
@@ -112,25 +113,15 @@ Paciente buscarPacientePorID(const char *nomeArquivo, const char *idBuscado) {
     return resultado;
 }
 
-Paciente modificarPaciente(const char *nomeArquivo, const char *idBuscado){
-    char alterar, servico;
-    Paciente pacienteModificado = buscarPacientePorID(nomeArquivo, idBuscado);
+void modificarPaciente(const char *nomeArquivo, const int idParaAlterar){
+    char idChar[50];
 
-    if(strcmp(pacienteModificado.id, "") == 0){
-        printf("Não foi encontrado nenhum paciente com esse ID");
-        abort();
-    }
+    sprintf(idChar, "%d", idParaAlterar);
 
-    printf("Você deseja alterar os dados do paciente %s?: [s/n] \n", pacienteModificado.nome);
-    scanf(" %c", &alterar); 
+    Paciente pacienteParaModificar = buscarPacientePorID("registroPaciente.txt", idChar); 
 
-    if (alterar == 'n') {
-    printf("Então vou encerrar a modificacao por aqui! \n");
-    abort();
-    }
-
-    printf("Digite o novo nome do paciente: \n");
-    scanf("%s", pacienteModificado.nome);
+    printf("Nome: %s", pacienteParaModificar.nome);
+    
 }
 
 void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
