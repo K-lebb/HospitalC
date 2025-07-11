@@ -82,7 +82,7 @@ int main() {
 
                 if (medicoEncontrado.id != 0) {
 
-                    printf("Médico encontrado:\n");
+                    printf("Medico encontrado:\n");
                     printf("Nome: %s\n", medicoEncontrado.nome);
                     printf("CRM: %s\n", medicoEncontrado.crm);
                     printf("ID: %s\n", medicoEncontrado.id);
@@ -90,22 +90,22 @@ int main() {
 
                 } else {
 
-                    printf("Médico não encontrado.\n");
+                    printf("Medico não encontrado.\n");
 
                 }
                 
             } else if (operacao == 3) {
 
-                printf("Digite o ID do médico que deseja modificar: ");
-                scanf("%s", idBuscado);
+                printf("Digite o ID do Medico que deseja modificar: ");
+                scanf("%d", &idParaAlterar);
 
-                Medico medicoAlterado = modificarMedico("registroMedico.txt", idBuscado);
+                modificarMedico("registroMedico.txt", idParaAlterar);
 
             } else if (operacao == 4) {
                 
                 int idParaRemover;
                 printf("Digite o id que voce deseja apagar: \n");
-                scanf("%d", idParaRemover);
+                scanf("%d", &idParaRemover);
                 apagarMedico("registroMedico.txt", idParaRemover);
 
             } else {
@@ -118,7 +118,7 @@ int main() {
             break;
 
         default:
-            printf("Opção invalida\n");
+            printf("Opcao invalida\n");
             abort();  
             break;
     }

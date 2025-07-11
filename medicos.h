@@ -13,6 +13,6 @@ void cadastrarMedico();
 void listarMedicos();
 Medico buscarMedicoPorID(const char *nomeArquivo, const char *idBuscado);
 void apagarMedico(const char *nomeArquivo, const int idParaRemover);
-Medico modificarMedico(const char *nomeArquivo, const char *idBuscado);
+void modificarMedico(const char *nomeArquivo, const int idParaAlterar);
 
 #endif
