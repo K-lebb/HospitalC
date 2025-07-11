@@ -9,6 +9,7 @@ static Paciente paciente;
 
 void cadastrarPacientes() {
     int proximoID = gerarProximoID("registroPaciente.txt");
+
     sprintf(paciente.id, "%d", proximoID);
 
     printf("Digite o nome do paciente: ");
@@ -118,11 +119,60 @@ void modificarPaciente(const char *nomeArquivo, const int idParaAlterar){
 
     sprintf(idChar, "%d", idParaAlterar);
 
-    Paciente pacienteParaModificar = buscarPacientePorID("registroPaciente.txt", idChar); 
+    Paciente pacienteAntigo = buscarPacientePorID("registroPaciente.txt", idChar); 
 
-    printf("Nome: %s", pacienteParaModificar.nome);
-    
+    if(pacienteAntigo.id == '\0'){
+        printf("Paciente não existe");
+        abort();
+    }
+
+    printf("Nome do Paciente: %s\n", pacienteAntigo.nome);
+    printf("CPF do Paciente: %s\n", pacienteAntigo.cpf);
+
+    apagarPaciente("registroPacient.txt", idParaAlterar);
+
+    Paciente pacienteAlterado;
+    strcpy(pacienteAlterado.id, pacienteAntigo.id);
+
+    printf("\nDigite os novos dados para o paciente:\n");
+
+    printf("Novo nome: ");
+    scanf(" %[^\n]", pacienteAlterado.nome);
+
+    printf("Novo CPF: ");
+    scanf("%s", pacienteAlterado.cpf);
+
+    printf("Novo ID do médico responsável: ");
+    scanf("%s", pacienteAlterado.idMedico);
+
+    Medico medicoEncontrado = buscarMedicoPorID("registroMedico.txt", pacienteAlterado.idMedico);
+    if (medicoEncontrado.id[0] == '\0') {
+        printf("Médico com ID %s não encontrado.\n", pacienteAlterado.idMedico);
+        printf("Por favor, cadastre o médico antes.\n");
+        system("pause");
+        return;
+    }
+
+    printf("Novo estado do paciente (Grave(3), Moderado(2), Leve(1)): ");
+    scanf("%d", &pacienteAlterado.estado);
+
+    FILE *arq = fopen(nomeArquivo, "a");
+    if (!arq) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
+    fprintf(arq, "%s;%s;%s;%s;%d\n",
+            pacienteAlterado.id,
+            pacienteAlterado.nome,
+            pacienteAlterado.cpf,
+            pacienteAlterado.idMedico,
+            pacienteAlterado.estado);
+    fclose(arq);
+
+    printf("Paciente atualizado com sucesso!\n");
 }
+
 
 void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
     FILE *arquivoOriginal = fopen(nomeArquivo, "r");

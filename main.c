@@ -6,8 +6,10 @@
 int main() {
     int opcaoAtendente;
     int operacao;
-    char idBuscado[50];
     int idRemover;
+    int idParaAlterar;
+    char idBuscado[50];
+    
 
     printf("Digite se deseja entrar na area dos Pacientes(1), Medicos(2), Fila(3): ");
     scanf("%d", &opcaoAtendente);
@@ -47,10 +49,8 @@ int main() {
             } else if (operacao == 3) {
 
                 printf("Digite o ID do paciente que deseja modificar: ");
-                scanf("%s", idBuscado);
-
-                
-
+                scanf("%d", &idParaAlterar);
+                modificarPaciente("registroPaciente.txt", idParaAlterar);
 
             } else if (operacao == 4) {
                 
