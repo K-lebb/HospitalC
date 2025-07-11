@@ -24,7 +24,7 @@ int main() {
 
             if (operacao == 1) {
                 cadastrarPacientes();
-
+                listarPacientes("registroPaciente.txt");
             } else if (operacao == 2) {
 
                 printf("Digite o ID do paciente que deseja buscar: ");
@@ -45,19 +45,19 @@ int main() {
                     printf("Paciente não encontrado.\n");
 
                 }
-                
+                listarPacientes("registroPaciente.txt");
             } else if (operacao == 3) {
 
                 printf("Digite o ID do paciente que deseja modificar: ");
                 scanf("%d", &idParaAlterar);
                 modificarPaciente("registroPaciente.txt", idParaAlterar);
-
+                listarPacientes("registroPaciente.txt");
             } else if (operacao == 4) {
                 
                 printf("Digite o id que voce deseja apagar: \n");
                 scanf("%d", &idRemover);
                 apagarPaciente("registroPaciente.txt", idRemover);
-
+                listarPacientes("registroPaciente.txt");
             } else {
                 printf("Opcao invalida\n");
             }

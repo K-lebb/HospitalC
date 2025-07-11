@@ -210,3 +210,24 @@ void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
         printf("Paciente com id &d nao foi encontrado.\n", idParaRemover);
     }
 }
+
+void listarPacientes(const char *nomeArquivo) {
+    FILE *arquivo = fopen(nomeArquivo, "r");
+    if (!arquivo) {
+        perror("Erro ao abrir o arquivo");
+        return;
+    }
+
+    char linha[150];
+    Paciente paciente;
+    printf ("\nDados dos pacientes\n");
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%49[^;];",
+                   paciente.id, paciente.nome, paciente.cpf, paciente.idMedico) == 4) {
+            printf("ID: %s\nNome: %s\nCPF: %s\nID do medico vinculado: %s\n\n",
+                   paciente.id, paciente.nome, paciente.cpf,
+                   paciente.idMedico);
+        }
+    }
+    fclose(arquivo);
+}
