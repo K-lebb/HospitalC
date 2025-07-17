@@ -66,11 +66,11 @@ void consultarPacientePorID() {
         printf("ID do Medico responsável: %s \n", pacienteEncontrado.idMedico);
         printf("Estado do paciente: ");
         if (pacienteEncontrado.estado == 3) {
-        printf("Grave");
+        printf("Grave \n");
         } else if (pacienteEncontrado.estado == 2) {
-            printf("Moderado");
+            printf("Moderado \n");
         } else {
-            printf("Leve");
+            printf("Leve \n");
         }
     } else {
         printf("Paciente não encontrado.\n");
@@ -207,7 +207,7 @@ void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
     if (encontrou){
         printf("Paciente com id %d removido com sucesso.\n", idParaRemover);
     } else {
-        printf("Paciente com id &d nao foi encontrado.\n", idParaRemover);
+        printf("Paciente com id %d nao foi encontrado.\n", idParaRemover);
     }
 }
 
@@ -220,14 +220,21 @@ void listarPacientes(const char *nomeArquivo) {
 
     char linha[150];
     Paciente paciente;
-    printf ("\nDados dos pacientes\n");
+
+    printf("\n===== Lista de Pacientes =====\n");
+
     while (fgets(linha, sizeof(linha), arquivo)) {
         if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%49[^;];",
                    paciente.id, paciente.nome, paciente.cpf, paciente.idMedico) == 4) {
-            printf("ID: %s\nNome: %s\nCPF: %s\nID do medico vinculado: %s\n\n",
-                   paciente.id, paciente.nome, paciente.cpf,
-                   paciente.idMedico);
+
+            printf("\n=== Paciente ===\n");
+            printf("ID: %s\n", paciente.id);
+            printf("Nome: %s\n", paciente.nome);
+            printf("CPF: %s\n", paciente.cpf);
+            printf("ID do médico vinculado: %s\n", paciente.idMedico);
+            printf("------------------------------\n");
         }
     }
+
     fclose(arquivo);
 }

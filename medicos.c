@@ -91,18 +91,28 @@ void listarMedicos(const char *nomeArquivo) {
 
     char linha[150];
     Medico medico;
+
+    printf("\n===== Lista de Médicos =====\n");
+
     while (fgets(linha, sizeof(linha), arquivo)) {
         int plantaoInt;
+
         if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%d",
                    medico.id, medico.nome, medico.crm, &plantaoInt) == 4) {
             medico.plantao = (plantaoInt != 0);
-            printf("ID: %s\nNome: %s\nCRM: %s\nPlantao: %s\n\n",
-                   medico.id, medico.nome, medico.crm,
-                   medico.plantao ? "Sim" : "Nao");
+
+            printf("\n=== Médico ===\n");
+            printf("ID: %s\n", medico.id);
+            printf("Nome: %s\n", medico.nome);
+            printf("CRM: %s\n", medico.crm);
+            printf("Plantão: %s\n", medico.plantao ? "Sim" : "Não");
+            printf("------------------------------\n");
         }
     }
+
     fclose(arquivo);
 }
+
 
 void apagarMedico(const char *nomeArquivo, const int idParaRemover){
     FILE *arquivoOriginal = fopen(nomeArquivo, "r");

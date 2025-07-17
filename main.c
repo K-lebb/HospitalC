@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "pacientes.h"
 #include "medicos.h"
+#include "fila.h"
 
 int main() {
     int opcaoAtendente;
@@ -24,7 +25,6 @@ int main() {
 
             if (operacao == 1) {
                 cadastrarPacientes();
-                listarPacientes("registroPaciente.txt");
             } else if (operacao == 2) {
 
                 printf("Digite o ID do paciente que deseja buscar: ");
@@ -45,19 +45,16 @@ int main() {
                     printf("Paciente não encontrado.\n");
 
                 }
-                listarPacientes("registroPaciente.txt");
             } else if (operacao == 3) {
 
                 printf("Digite o ID do paciente que deseja modificar: ");
                 scanf("%d", &idParaAlterar);
                 modificarPaciente("registroPaciente.txt", idParaAlterar);
-                listarPacientes("registroPaciente.txt");
             } else if (operacao == 4) {
                 
                 printf("Digite o id que voce deseja apagar: \n");
                 scanf("%d", &idRemover);
                 apagarPaciente("registroPaciente.txt", idRemover);
-                listarPacientes("registroPaciente.txt");
             } else {
                 printf("Opcao invalida\n");
             }
@@ -114,7 +111,34 @@ int main() {
             break;
 
         case 3:
-            // Fila (não implementado)
+            printf("Escolha uma operacao:\n");
+            printf(" 1 - Listar o Medico Designado de Cada Paciente\n 2 - Trocar de Medico\n 3 - Alterar Estado do Paciente\n ");
+            scanf("%d", &operacao);
+
+
+            if (operacao == 1) {
+
+                listarMedicosDesignados();
+
+            } else if (operacao == 2) {
+
+                printf("Digite o ID do Paciente que deseja trocar o Medico: ");
+                scanf("%d", &idParaAlterar);
+
+                trocarMedico(idParaAlterar);
+
+            } else if (operacao == 3) {
+
+                printf("Digite o ID do Paciente que deseja trocar o estado: ");
+                scanf("%d", &idParaAlterar);
+
+                trocarEstado(idParaAlterar);
+
+            } else {
+                printf("Opcao invalida\n");
+            }
+
+            
             break;
 
         default:
@@ -122,6 +146,11 @@ int main() {
             abort();  
             break;
     }
+    
+    printf("\n=== AQUI ESTÁ A SITUACAO DO HOSPITAL ===\n");
+    listarMedicos("registroMedico.txt");
+    listarPacientes("registroPaciente.txt");
+
 
     return 0;
 }
