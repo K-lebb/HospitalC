@@ -12,10 +12,16 @@ int main() {
     char idBuscado[50];
     
 
-    printf("Digite se deseja entrar na area dos Pacientes(1), Medicos(2), Fila(3): ");
+    printf("Digite se deseja entrar na area dos Pacientes(1), Medicos(2), Fila(3) ou Sair(0): ");
     scanf("%d", &opcaoAtendente);
 
     switch (opcaoAtendente) {
+
+        case 0:
+            printf("Delisgando Sistema [...] \n");
+            return(0);
+
+            break;
 
         case 1:
 
@@ -58,6 +64,7 @@ int main() {
             } else {
                 printf("Opcao invalida\n");
             }
+
             break;
 
         case 2:
@@ -90,6 +97,7 @@ int main() {
                     printf("Medico não encontrado.\n");
 
                 }
+
                 
             } else if (operacao == 3) {
 
@@ -146,10 +154,9 @@ int main() {
             abort();  
             break;
     }
-    
-    printf("\n=== AQUI ESTÁ A SITUACAO DO HOSPITAL ===\n");
-    listarMedicos("registroMedico.txt");
-    listarPacientes("registroPaciente.txt");
+
+    esperarEnter();
+    relatorio();
 
 
     return 0;

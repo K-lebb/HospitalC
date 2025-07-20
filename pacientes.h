@@ -14,6 +14,5 @@ void consultarPacientePorID();
 Paciente buscarPacientePorID(const char *nomeArquivo, const char *idBuscadoPaciente); 
 void modificarPaciente(const char *nomeArquivo, const int idParaAlterar);
 void apagarPaciente(const char *nomeArquivo, const int idParaRemover);
-void listarPacientes(const char *nomeArquivo);
-
+void listarPacientes(const char *nomeArquivo, FILE *saida, int *total);
 #endif

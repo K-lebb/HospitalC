@@ -82,36 +82,64 @@ Medico buscarMedicoPorID(const char *nomeArquivo, const char *idBuscado) {
     return resultado;
 }
 
-void listarMedicos(const char *nomeArquivo) {
+void listarMedicos(const char *nomeArquivo, FILE *saida, int *total) {
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
-        perror("Erro ao abrir o arquivo");
+        perror("Erro ao abrir o arquivo de médicos");
         return;
     }
 
     char linha[150];
     Medico medico;
+    int numeroMedicos = 0;
 
-    printf("\n===== Lista de Médicos =====\n");
+    if (saida)
+        fprintf(saida, "\n===== Lista de Médicos =====\n");
+    else
+        printf("\n===== Lista de Médicos =====\n");
 
     while (fgets(linha, sizeof(linha), arquivo)) {
         int plantaoInt;
 
         if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%d",
                    medico.id, medico.nome, medico.crm, &plantaoInt) == 4) {
+
             medico.plantao = (plantaoInt != 0);
 
-            printf("\n=== Médico ===\n");
-            printf("ID: %s\n", medico.id);
-            printf("Nome: %s\n", medico.nome);
-            printf("CRM: %s\n", medico.crm);
-            printf("Plantão: %s\n", medico.plantao ? "Sim" : "Não");
-            printf("------------------------------\n");
+            if (saida)
+                fprintf(saida,
+                    "\n=== Médico ===\n"
+                    "ID: %s\n"
+                    "Nome: %s\n"
+                    "CRM: %s\n"
+                    "Plantão: %s\n"
+                    "------------------------------\n",
+                    medico.id, medico.nome, medico.crm,
+                    medico.plantao ? "Sim" : "Não");
+            else
+                printf(
+                    "\n=== Médico ===\n"
+                    "ID: %s\n"
+                    "Nome: %s\n"
+                    "CRM: %s\n"
+                    "Plantão: %s\n"
+                    "------------------------------\n",
+                    medico.id, medico.nome, medico.crm,
+                    medico.plantao ? "Sim" : "Não");
+
+            numeroMedicos++;
         }
     }
 
+    if (saida)
+        fprintf(saida, "\n=== Total de Médicos: %d ===\n", numeroMedicos);
+    else
+        printf("\n=== Total de Médicos: %d ===\n", numeroMedicos);
+
     fclose(arquivo);
+    if (total) *total = numeroMedicos;
 }
+
 
 
 void apagarMedico(const char *nomeArquivo, const int idParaRemover){

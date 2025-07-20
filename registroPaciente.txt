@@ -1,5 +1,3 @@
 3;Joao Lucas Simoes;12412512642;1;3
 4;Joao Miguel;1251326;1;3
 5;Francisco pereira;125234753;2;3
-6;Paulo Ricardo;1252623;2;2
-7;Gabriel Kaleb;7894561;3;2

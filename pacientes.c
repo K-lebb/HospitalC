@@ -211,30 +211,59 @@ void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
     }
 }
 
-void listarPacientes(const char *nomeArquivo) {
+void listarPacientes(const char *nomeArquivo, FILE *saida, int *total) {
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
-        perror("Erro ao abrir o arquivo");
+        perror("Erro ao abrir o arquivo de pacientes");
         return;
     }
 
+    int numeroPacientes = 0;
     char linha[150];
     Paciente paciente;
 
-    printf("\n===== Lista de Pacientes =====\n");
+    if (saida)
+        fprintf(saida, "\n===== Lista de Pacientes =====\n");
+    else
+        printf("\n===== Lista de Pacientes =====\n");
 
     while (fgets(linha, sizeof(linha), arquivo)) {
-        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%49[^;];",
-                   paciente.id, paciente.nome, paciente.cpf, paciente.idMedico) == 4) {
+        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%d;%49[^;\n]",
+                   paciente.id, paciente.nome, paciente.cpf,
+                   &paciente.estado, paciente.idMedico) == 5) {
 
-            printf("\n=== Paciente ===\n");
-            printf("ID: %s\n", paciente.id);
-            printf("Nome: %s\n", paciente.nome);
-            printf("CPF: %s\n", paciente.cpf);
-            printf("ID do médico vinculado: %s\n", paciente.idMedico);
-            printf("------------------------------\n");
+            if (saida)
+                fprintf(saida,
+                    "\n=== Paciente ===\n"
+                    "ID: %s\n"
+                    "Nome: %s\n"
+                    "CPF: %s\n"
+                    "Estado do Paciente: %d\n"
+                    "ID do médico vinculado: %s\n"
+                    "------------------------------\n",
+                    paciente.id, paciente.nome, paciente.cpf,
+                    paciente.estado, paciente.idMedico);
+            else
+                printf(
+                    "\n=== Paciente ===\n"
+                    "ID: %s\n"
+                    "Nome: %s\n"
+                    "CPF: %s\n"
+                    "Estado do Paciente: %d\n"
+                    "ID do médico vinculado: %s\n"
+                    "------------------------------\n",
+                    paciente.id, paciente.nome, paciente.cpf,
+                    paciente.estado, paciente.idMedico);
+
+            numeroPacientes++;
         }
     }
 
+    if (saida)
+        fprintf(saida, "\n=== Total de Pacientes: %d ===\n", numeroPacientes);
+    else
+        printf("\n=== Total de Pacientes: %d ===\n", numeroPacientes);
+
     fclose(arquivo);
+    if (total) *total = numeroPacientes;
 }

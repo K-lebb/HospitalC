@@ -1,0 +1,57 @@
+
+===== Lista de Médicos =====
+
+=== Médico ===
+ID: 2
+Nome: Vitor Hugo
+CRM: 123456852
+Plantão: Não
+------------------------------
+
+=== Médico ===
+ID: 3
+Nome: Ramom Venancio 
+CRM: 7895246
+Plantão: Sim
+------------------------------
+
+=== Médico ===
+ID: 1
+Nome: Anne Araujo dos Santos
+CRM: 78945613
+Plantão: Não
+------------------------------
+
+=== Total de Médicos: 3 ===
+
+===== Lista de Pacientes =====
+
+=== Paciente ===
+ID: 3
+Nome: Joao Lucas Simoes
+CPF: 12412512642
+Estado do Paciente: 1
+ID do médico vinculado: 3
+------------------------------
+
+=== Paciente ===
+ID: 4
+Nome: Joao Miguel
+CPF: 1251326
+Estado do Paciente: 1
+ID do médico vinculado: 3
+------------------------------
+
+=== Paciente ===
+ID: 5
+Nome: Francisco pereira
+CPF: 125234753
+Estado do Paciente: 2
+ID do médico vinculado: 3
+------------------------------
+
+=== Total de Pacientes: 3 ===
+
+===== RESUMO FINAL =====
+Total de Médicos: 3
+Total de Pacientes: 3
