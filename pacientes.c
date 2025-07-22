@@ -25,7 +25,6 @@ void cadastrarPacientes() {
     if (medicoEncontrado.id[0] == '\0') {
         printf("Medico com ID %s não encontrado.\n", paciente.idMedico);
         printf("Por favor, cadastre o Medico antes de cadastrar o paciente.\n");
-        // system("pause"); // Opcional: retire se não for Windows
         abort();
     }
 
@@ -34,7 +33,6 @@ void cadastrarPacientes() {
 
     if (paciente.estado < 1 || paciente.estado > 3) {
         printf("Você anexou um estado que não computamos no sistema!\n");
-        // system("pause");
         abort();
     }
 
@@ -143,7 +141,6 @@ void modificarPaciente(const char *nomeArquivo, const int idParaAlterar) {
     if (medicoEncontrado.id[0] == '\0') {
         printf("Medico com ID %s não encontrado.\n", pacienteAlterado.idMedico);
         printf("Por favor, cadastre o Medico antes.\n");
-        // system("pause");
         return;
     }
 
@@ -173,7 +170,6 @@ void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
     
     if (!arquivoOriginal || !arquivoTemp){
         printf("Erro ao abrir arquivos.\n");
-        // system("pause");
         abort();
     }
 

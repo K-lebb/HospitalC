@@ -5,7 +5,7 @@
 #include <strings.h> 
 #include "medicos.h"
 #include "fila.h"
-#include "pacientes.h"   // Inclui struct Paciente
+#include "pacientes.h"  
 
 static Medico medico;
 
@@ -208,7 +208,6 @@ void contarPacientesPorMedico(Medico *medicos, int totalMedicos) {
         return;
     }
 
-    // Inicializa a contagem para cada médico
     for (int i = 0; i < totalMedicos; i++) {
         medicos[i].totalPacientes = 0;
     }

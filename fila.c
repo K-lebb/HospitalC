@@ -8,10 +8,9 @@
 
 void esperarEnter() {
     printf("\nPressione Enter para continuar...\n");
-    while (getchar() != '\n'); // consome até o fim da linha atual
+    while (getchar() != '\n');
 }
 
-// Gera o próximo ID baseado no maior existente no arquivo
 int gerarProximoID(const char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
@@ -78,7 +77,7 @@ void listarMedicosDesignados() {
                            paciente.idMedico, &paciente.estado) == 5) {
 
                     if (strcmp(paciente.idMedico, medico.id) == 0) {
-                        if (qtdPacientes < 100) { // evitar overflow
+                        if (qtdPacientes < 100) { 
                             pacientes[qtdPacientes++] = paciente;
                         }
                     }
@@ -87,7 +86,6 @@ void listarMedicosDesignados() {
 
             fclose(arqPac);
 
-            // Ordena pacientes pelo estado em ordem decrescente (3 a 0)
             for (int i = 0; i < qtdPacientes - 1; i++) {
                 for (int j = i + 1; j < qtdPacientes; j++) {
                     if (pacientes[i].estado < pacientes[j].estado) {
@@ -240,7 +238,6 @@ void trocarEstado(const int idParaAlterar) {
         return;
     }
 
-    // Atualiza estado do paciente
     paciente.estado = novoEstado;
 
     apagarPaciente("registroPaciente.txt", idParaAlterar);
@@ -270,9 +267,9 @@ void relatorio() {
     }
 
     Medico medicos[100];
-    int totalMedicos = carregarMedicos("registroMedico.txt", medicos, 100); // carrega médicos
+    int totalMedicos = carregarMedicos("registroMedico.txt", medicos, 100);
 
-    contarPacientesPorMedico(medicos, totalMedicos); // conta pacientes para cada médico
+    contarPacientesPorMedico(medicos, totalMedicos); 
 
     fprintf(arquivo, "\n===== PACIENTES POR MÉDICO =====\n");
     for (int i = 0; i < totalMedicos; i++) {
