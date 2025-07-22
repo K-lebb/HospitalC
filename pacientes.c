@@ -25,7 +25,7 @@ void cadastrarPacientes() {
     if (medicoEncontrado.id[0] == '\0') {
         printf("Medico com ID %s não encontrado.\n", paciente.idMedico);
         printf("Por favor, cadastre o Medico antes de cadastrar o paciente.\n");
-        system("pause");
+        // system("pause"); // Opcional: retire se não for Windows
         abort();
     }
 
@@ -34,7 +34,7 @@ void cadastrarPacientes() {
 
     if (paciente.estado < 1 || paciente.estado > 3) {
         printf("Você anexou um estado que não computamos no sistema!\n");
-        system("pause");
+        // system("pause");
         abort();
     }
 
@@ -58,7 +58,7 @@ void consultarPacientePorID() {
     scanf("%s", idBuscadoPaciente);
 
     Paciente pacienteEncontrado = buscarPacientePorID("registroPaciente.txt", idBuscadoPaciente);
-    if (pacienteEncontrado.id != 0) {
+    if (pacienteEncontrado.id[0] != '\0') {
         printf("Paciente encontrado:\n");
         printf("ID: %s\n", pacienteEncontrado.id);
         printf("Nome: %s\n", pacienteEncontrado.nome);
@@ -66,7 +66,7 @@ void consultarPacientePorID() {
         printf("ID do Medico responsável: %s \n", pacienteEncontrado.idMedico);
         printf("Estado do paciente: ");
         if (pacienteEncontrado.estado == 3) {
-        printf("Grave \n");
+            printf("Grave \n");
         } else if (pacienteEncontrado.estado == 2) {
             printf("Moderado \n");
         } else {
@@ -78,7 +78,6 @@ void consultarPacientePorID() {
 }
 
 Paciente buscarPacientePorID(const char *nomeArquivo, const char *idBuscado) {
-    char texto[50];
     Paciente resultado = {"", "", "", "", 0};
     FILE *arquivo = fopen(nomeArquivo, "r");
 
@@ -89,12 +88,10 @@ Paciente buscarPacientePorID(const char *nomeArquivo, const char *idBuscado) {
 
     char linha[150];
     while (fgets(linha, sizeof(linha), arquivo)) {
-
         char *token = strtok(linha, ";\n");
-
         if (token && strcmp(token, idBuscado) == 0) {
-
             strcpy(resultado.id, token);
+
             token = strtok(NULL, ";\n");
             if (token) strcpy(resultado.nome, token);
 
@@ -118,7 +115,7 @@ void modificarPaciente(const char *nomeArquivo, const int idParaAlterar) {
     char idChar[50];
     sprintf(idChar, "%d", idParaAlterar);
 
-    Paciente pacienteAntigo = buscarPacientePorID("registroPaciente.txt", idChar); 
+    Paciente pacienteAntigo = buscarPacientePorID(nomeArquivo, idChar);
 
     if (pacienteAntigo.id[0] == '\0') {
         printf("Paciente nao existe.\n");
@@ -128,7 +125,7 @@ void modificarPaciente(const char *nomeArquivo, const int idParaAlterar) {
     printf("Nome do Paciente: %s\n", pacienteAntigo.nome);
     printf("CPF do Paciente: %s\n", pacienteAntigo.cpf);
 
-    apagarPaciente("registroMedico.txt", idParaAlterar);
+    apagarPaciente(nomeArquivo, idParaAlterar);
 
     Paciente pacienteAlterado;
     strcpy(pacienteAlterado.id, pacienteAntigo.id);
@@ -146,14 +143,14 @@ void modificarPaciente(const char *nomeArquivo, const int idParaAlterar) {
     if (medicoEncontrado.id[0] == '\0') {
         printf("Medico com ID %s não encontrado.\n", pacienteAlterado.idMedico);
         printf("Por favor, cadastre o Medico antes.\n");
-        system("pause");
+        // system("pause");
         return;
     }
 
     printf("Novo estado do paciente (Grave(3), Moderado(2), Leve(1)): ");
     scanf("%d", &pacienteAlterado.estado);
 
-    FILE *arquivo = fopen("registroPaciente.txt", "a");
+    FILE *arquivo = fopen(nomeArquivo, "a");
     if (!arquivo) {
         perror("Erro ao abrir o arquivo");
         return;
@@ -175,27 +172,23 @@ void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
     FILE *arquivoTemp = fopen("Temp.txt", "w");
     
     if (!arquivoOriginal || !arquivoTemp){
-        printf("Erro ao abrir");
-        system("pause");
+        printf("Erro ao abrir arquivos.\n");
+        // system("pause");
         abort();
     }
 
     char linha[1024];
-    char idStr[5];
+    char idStr[10];
     int encontrou = 0;
 
     while(fgets(linha, sizeof(linha), arquivoOriginal)){
-
-        if (sscanf(linha, "%5[^;]", idStr) == 1){
-
-        int idAtual = atoi(idStr);
-
+        if (sscanf(linha, "%9[^;]", idStr) == 1){
+            int idAtual = atoi(idStr);
             if (idAtual != idParaRemover){
-
-            fputs(linha, arquivoTemp);
-        } else {
-            encontrou = 1;
-        }
+                fputs(linha, arquivoTemp);
+            } else {
+                encontrou = 1;
+            }
         }
     }
     fclose(arquivoOriginal);
@@ -211,8 +204,8 @@ void apagarPaciente(const char *nomeArquivo, const int idParaRemover){
     }
 }
 
-void listarPacientes(const char *nomeArquivo, FILE *saida, int *total) {
-    FILE *arquivo = fopen(nomeArquivo, "r");
+void listarPacientes(FILE *saida, int *total) {
+    FILE *arquivo = fopen("registroPaciente.txt", "r");
     if (!arquivo) {
         perror("Erro ao abrir o arquivo de pacientes");
         return;
@@ -222,48 +215,55 @@ void listarPacientes(const char *nomeArquivo, FILE *saida, int *total) {
     char linha[150];
     Paciente paciente;
 
-    if (saida)
-        fprintf(saida, "\n===== Lista de Pacientes =====\n");
-    else
-        printf("\n===== Lista de Pacientes =====\n");
+    if (saida) fprintf(saida, "\n===== Lista de Pacientes =====\n");
 
     while (fgets(linha, sizeof(linha), arquivo)) {
-        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%d;%49[^;\n]",
-                   paciente.id, paciente.nome, paciente.cpf,
-                   &paciente.estado, paciente.idMedico) == 5) {
-
+        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%49[^;];%d",
+                   paciente.id, paciente.nome, paciente.cpf, paciente.idMedico, &paciente.estado) == 5) {
             if (saida)
                 fprintf(saida,
-                    "\n=== Paciente ===\n"
-                    "ID: %s\n"
-                    "Nome: %s\n"
-                    "CPF: %s\n"
-                    "Estado do Paciente: %d\n"
-                    "ID do médico vinculado: %s\n"
-                    "------------------------------\n",
-                    paciente.id, paciente.nome, paciente.cpf,
-                    paciente.estado, paciente.idMedico);
-            else
-                printf(
-                    "\n=== Paciente ===\n"
-                    "ID: %s\n"
-                    "Nome: %s\n"
-                    "CPF: %s\n"
-                    "Estado do Paciente: %d\n"
-                    "ID do médico vinculado: %s\n"
-                    "------------------------------\n",
-                    paciente.id, paciente.nome, paciente.cpf,
-                    paciente.estado, paciente.idMedico);
-
+                        "\n=== Paciente ===\nID: %s\nNome: %s\nCPF: %s\nEstado do Paciente: %d\nID do medico vinculado: %s\n------------------------------\n",
+                        paciente.id, paciente.nome, paciente.cpf,
+                        paciente.estado, paciente.idMedico);
             numeroPacientes++;
         }
     }
 
-    if (saida)
-        fprintf(saida, "\n=== Total de Pacientes: %d ===\n", numeroPacientes);
-    else
-        printf("\n=== Total de Pacientes: %d ===\n", numeroPacientes);
-
+    if (saida) fprintf(saida, "\n=== Total de Pacientes: %d ===\n", numeroPacientes);
     fclose(arquivo);
     if (total) *total = numeroPacientes;
+}
+
+void ambulatorio(int *totalAltas, int *totalInternados, int *totalModerados, int *totalLeves) {
+    *totalAltas = 0;
+    *totalInternados = 0;
+    *totalModerados = 0;
+    *totalLeves = 0;
+
+    FILE *arquivoAltas = fopen("registroAlta.txt", "r");
+    if (arquivoAltas) {
+        char linha[150];
+        while (fgets(linha, sizeof(linha), arquivoAltas)) {
+            (*totalAltas)++;
+        }
+        fclose(arquivoAltas);
+    }
+
+    FILE *arquivoPacientes = fopen("registroPaciente.txt", "r");
+    if (!arquivoPacientes) {
+        printf("Erro ao abrir registro dos pacientes!\n");
+        return;
+    }
+
+    Paciente paciente;
+    char linha[150];
+    while (fgets(linha, sizeof(linha), arquivoPacientes)) {
+        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%49[^;];%d",
+                   paciente.id, paciente.nome, paciente.cpf, paciente.idMedico, &paciente.estado) == 5) {
+            if (paciente.estado == 3) (*totalInternados)++;
+            else if (paciente.estado == 2) (*totalModerados)++;
+            else if (paciente.estado == 1) (*totalLeves)++;
+        }
+    }
+    fclose(arquivoPacientes);
 }

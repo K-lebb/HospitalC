@@ -5,6 +5,7 @@
 #include <strings.h> 
 #include "medicos.h"
 #include "fila.h"
+#include "pacientes.h"   // Inclui struct Paciente
 
 static Medico medico;
 
@@ -28,7 +29,7 @@ void cadastrarMedico() {
     printf("Digite o CRM do Medico: ");
     scanf(" %[^\n]", medico.crm);
 
-    printf("O Médico esta de plantao? (Sim/Nao): ");
+    printf("O Medico esta de plantao? (Sim/Nao): ");
     scanf(" %9s", entradaPlantao);
 
     if (!interpretarPlantao(entradaPlantao, &medico.plantao)) {
@@ -82,10 +83,10 @@ Medico buscarMedicoPorID(const char *nomeArquivo, const char *idBuscado) {
     return resultado;
 }
 
-void listarMedicos(const char *nomeArquivo, FILE *saida, int *total) {
-    FILE *arquivo = fopen(nomeArquivo, "r");
+void listarMedicos(FILE *saida, int *total) {
+    FILE *arquivo = fopen("registroMedico.txt", "r");
     if (!arquivo) {
-        perror("Erro ao abrir o arquivo de médicos");
+        perror("Erro ao abrir o arquivo de medico");
         return;
     }
 
@@ -93,54 +94,25 @@ void listarMedicos(const char *nomeArquivo, FILE *saida, int *total) {
     Medico medico;
     int numeroMedicos = 0;
 
-    if (saida)
-        fprintf(saida, "\n===== Lista de Médicos =====\n");
-    else
-        printf("\n===== Lista de Médicos =====\n");
+    if (saida) fprintf(saida, "\n===== Lista de Medicos =====\n");
 
     while (fgets(linha, sizeof(linha), arquivo)) {
         int plantaoInt;
-
         if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%d",
                    medico.id, medico.nome, medico.crm, &plantaoInt) == 4) {
-
             medico.plantao = (plantaoInt != 0);
-
             if (saida)
                 fprintf(saida,
-                    "\n=== Médico ===\n"
-                    "ID: %s\n"
-                    "Nome: %s\n"
-                    "CRM: %s\n"
-                    "Plantão: %s\n"
-                    "------------------------------\n",
-                    medico.id, medico.nome, medico.crm,
-                    medico.plantao ? "Sim" : "Não");
-            else
-                printf(
-                    "\n=== Médico ===\n"
-                    "ID: %s\n"
-                    "Nome: %s\n"
-                    "CRM: %s\n"
-                    "Plantão: %s\n"
-                    "------------------------------\n",
-                    medico.id, medico.nome, medico.crm,
-                    medico.plantao ? "Sim" : "Não");
-
+                        "\n=== Medico ===\nID: %s\nNome: %s\nCRM: %s\nPlantão: %s\n------------------------------\n",
+                        medico.id, medico.nome, medico.crm, medico.plantao ? "Sim" : "Não");
             numeroMedicos++;
         }
     }
 
-    if (saida)
-        fprintf(saida, "\n=== Total de Médicos: %d ===\n", numeroMedicos);
-    else
-        printf("\n=== Total de Médicos: %d ===\n", numeroMedicos);
-
+    if (saida) fprintf(saida, "\n=== Total de Medicos: %d ===\n", numeroMedicos);
     fclose(arquivo);
     if (total) *total = numeroMedicos;
 }
-
-
 
 void apagarMedico(const char *nomeArquivo, const int idParaRemover){
     FILE *arquivoOriginal = fopen(nomeArquivo, "r");
@@ -205,7 +177,7 @@ void modificarMedico(const char *nomeArquivo, const int idParaAlterar) {
     scanf(" %[^\n]", medicoAlterado.nome);
 
     char entradaPlantao[10];
-    printf("O Médico está de plantao? (Sim/Nao): ");
+    printf("O Medico está de plantao? (Sim/Nao): ");
     scanf(" %9s", entradaPlantao);
 
     if (!interpretarPlantao(entradaPlantao, &medicoAlterado.plantao)) {
@@ -227,4 +199,60 @@ void modificarMedico(const char *nomeArquivo, const int idParaAlterar) {
 
     fclose(arquivo);
     printf("Medico atualizado com sucesso!\n");
+}
+
+void contarPacientesPorMedico(Medico *medicos, int totalMedicos) {
+    FILE *arqPac = fopen("registroPaciente.txt", "r");
+    if (!arqPac) {
+        printf("Erro ao abrir registroPaciente.txt\n");
+        return;
+    }
+
+    // Inicializa a contagem para cada médico
+    for (int i = 0; i < totalMedicos; i++) {
+        medicos[i].totalPacientes = 0;
+    }
+
+    char linha[150];
+    while (fgets(linha, sizeof(linha), arqPac)) {
+        Paciente p;
+        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%49[^;];%d",
+                   p.id, p.nome, p.cpf, p.idMedico, &p.estado) == 5) {
+            for (int i = 0; i < totalMedicos; i++) {
+                if (strcmp(p.idMedico, medicos[i].id) == 0) {
+                    medicos[i].totalPacientes++;
+                    break;
+                }
+            }
+        }
+    }
+
+    fclose(arqPac);
+}
+
+int carregarMedicos(const char *nomeArquivo, Medico *medicos, int maxMedicos) {
+    FILE *arquivo = fopen(nomeArquivo, "r");
+    if (!arquivo) {
+        perror("Erro ao abrir arquivo de médicos");
+        return 0;
+    }
+
+    int count = 0;
+    char linha[150];
+    int plantaoInt;
+
+    while (fgets(linha, sizeof(linha), arquivo) && count < maxMedicos) {
+        if (sscanf(linha, "%9[^;];%49[^;];%49[^;];%d",
+                   medicos[count].id,
+                   medicos[count].nome,
+                   medicos[count].crm,
+                   &plantaoInt) == 4) {
+            medicos[count].plantao = (plantaoInt != 0);
+            medicos[count].totalPacientes = 0; 
+            count++;
+        }
+    }
+
+    fclose(arquivo);
+    return count;
 }

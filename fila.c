@@ -7,14 +7,14 @@
 #include "fila.h"
 
 void esperarEnter() {
-    printf("\n Pressione Enter para continuar...\n");
-    while (getchar() != '\n'); 
-    getchar(); 
+    printf("\nPressione Enter para continuar...\n");
+    while (getchar() != '\n'); // consome até o fim da linha atual
 }
 
+// Gera o próximo ID baseado no maior existente no arquivo
 int gerarProximoID(const char *nomeArquivo) {
     FILE *arquivo = fopen(nomeArquivo, "r");
-    if (arquivo == NULL) {
+    if (!arquivo) {
         return 1;
     }
 
@@ -24,7 +24,7 @@ int gerarProximoID(const char *nomeArquivo) {
 
     while (fgets(linha, sizeof(linha), arquivo)) {
         if (sscanf(linha, "%19[^;];", idStr) == 1) {
-            int idAtual = atoi(idStr); 
+            int idAtual = atoi(idStr);
             if (idAtual > maiorID) {
                 maiorID = idAtual;
             }
@@ -38,7 +38,7 @@ int gerarProximoID(const char *nomeArquivo) {
 void listarMedicosDesignados() {
     FILE *arqMed = fopen("registroMedico.txt", "r");
     if (!arqMed) {
-        perror("Erro ao abrir médicos");
+        perror("Erro ao abrir medicos");
         return;
     }
 
@@ -53,41 +53,41 @@ void listarMedicosDesignados() {
 
             medico.plantao = (plantaoInt != 0);
 
-            printf("\n=== Médico ===\n");
+            printf("\n=== Medico ===\n");
             printf("ID: %s\n", medico.id);
             printf("Nome: %s\n", medico.nome);
             printf("CRM: %s\n", medico.crm);
             printf("Plantão: %s\n", medico.plantao ? "Sim" : "Não");
             printf("------------------------------\n");
 
-            // Abre pacientes
             FILE *arqPac = fopen("registroPaciente.txt", "r");
             if (!arqPac) {
                 perror("Erro ao abrir pacientes");
                 continue;
             }
 
-            char linhaPac[150];
+            char linhaPaciente[150];
             Paciente paciente;
 
-            // Vetor para armazenar pacientes associados ao médico
             Paciente pacientes[100];
             int qtdPacientes = 0;
 
-            while (fgets(linhaPac, sizeof(linhaPac), arqPac)) {
-                if (sscanf(linhaPac, "%9[^;];%49[^;];%49[^;];%49[^;];%d",
+            while (fgets(linhaPaciente, sizeof(linhaPaciente), arqPac)) {
+                if (sscanf(linhaPaciente, "%9[^;];%49[^;];%49[^;];%49[^;];%d",
                            paciente.id, paciente.nome, paciente.cpf,
                            paciente.idMedico, &paciente.estado) == 5) {
 
                     if (strcmp(paciente.idMedico, medico.id) == 0) {
-                        pacientes[qtdPacientes++] = paciente;
+                        if (qtdPacientes < 100) { // evitar overflow
+                            pacientes[qtdPacientes++] = paciente;
+                        }
                     }
                 }
             }
 
             fclose(arqPac);
 
-            // Ordenar pacientes por gravidade (estado decrescente)
+            // Ordena pacientes pelo estado em ordem decrescente (3 a 0)
             for (int i = 0; i < qtdPacientes - 1; i++) {
                 for (int j = i + 1; j < qtdPacientes; j++) {
                     if (pacientes[i].estado < pacientes[j].estado) {
@@ -106,21 +106,21 @@ void listarMedicosDesignados() {
                 printf("ID: %s\n", p.id);
                 printf("Nome: %s\n", p.nome);
                 printf("CPF: %s\n", p.cpf);
-                printf("ID do médico vinculado: %s\n", p.idMedico);
+                printf("ID do medico vinculado: %s\n", p.idMedico);
                 printf("Estado do Paciente: %d\n", p.estado);
 
                 switch (p.estado) {
                     case 3:
-                        printf("Estado: INTERNAÇÃO\n");
+                        printf("Estado: GRAVE (Internação)\n");
                         break;
                     case 2:
-                        printf("Estado: GRAVE\n");
+                        printf("Estado: MODERADO\n");
                         break;
                     case 1:
-                        printf("Estado: MÉDIO\n");
+                        printf("Estado: LEVE\n");
                         break;
                     case 0:
-                        printf("Estado: LEVE\n");
+                        printf("Estado: ALTA\n");
                         break;
                     default:
                         printf("Estado: DESCONHECIDO\n");
@@ -134,12 +134,11 @@ void listarMedicosDesignados() {
     fclose(arqMed);
 }
 
-
 void trocarMedico(const int idParaAlterar) {
     char idChar[50];
     sprintf(idChar, "%d", idParaAlterar);
 
-    Paciente paciente = buscarPacientePorID("registroPaciente.txt", idChar); 
+    Paciente paciente = buscarPacientePorID("registroPaciente.txt", idChar);
 
     if (paciente.id[0] == '\0') {
         printf("Paciente não existe.\n");
@@ -153,15 +152,15 @@ void trocarMedico(const int idParaAlterar) {
     strcpy(pacienteAlterado.nome, paciente.nome);
     strcpy(pacienteAlterado.idMedico, paciente.idMedico);
     strcpy(pacienteAlterado.id, paciente.id);
-    strcpy(pacienteAlterado.cpf, paciente.cpf); 
+    strcpy(pacienteAlterado.cpf, paciente.cpf);
 
-    printf("Novo ID do Médico responsável: ");
+    printf("Novo ID do Medico responsável: ");
     scanf(" %49[^\n]", pacienteAlterado.idMedico);
 
     Medico medicoEncontrado = buscarMedicoPorID("registroMedico.txt", pacienteAlterado.idMedico);
     if (medicoEncontrado.id[0] == '\0') {
-        printf("Médico com ID %s não encontrado.\n", pacienteAlterado.idMedico);
-        printf("Por favor, cadastre o médico antes.\n");
+        printf("Medico com ID %s não encontrado.\n", pacienteAlterado.idMedico);
+        printf("Por favor, cadastre o medico antes.\n");
         return;
     }
 
@@ -169,7 +168,7 @@ void trocarMedico(const int idParaAlterar) {
     scanf("%d", &pacienteAlterado.estado);
 
     if (pacienteAlterado.estado == 3) {
-        printf("Ele não pode ser trocado de médico.\n");
+        printf("Ele não pode ser trocado de medico.\n");
         return;
     }
 
@@ -189,7 +188,7 @@ void trocarMedico(const int idParaAlterar) {
             pacienteAlterado.estado);
 
     fclose(arquivo);
-    printf("Médico do paciente atualizado com sucesso!\n");
+    printf("Medico do paciente atualizado com sucesso!\n");
 }
 
 void trocarEstado(const int idParaAlterar) {
@@ -207,42 +206,42 @@ void trocarEstado(const int idParaAlterar) {
     printf("ID: %s\n", paciente.id);
     printf("Nome: %s\n", paciente.nome);
     printf("CPF: %s\n", paciente.cpf);
-    printf("ID do médico responsável: %s\n", paciente.idMedico);
+    printf("ID do medico responsável: %s\n", paciente.idMedico);
     printf("Estado atual: %d\n", paciente.estado);
 
     int novoEstado;
     printf("Novo estado do paciente (Grave(3), Moderado(2), Leve(1), Alta(0)): ");
     scanf("%d", &novoEstado);
 
-    paciente.estado = novoEstado;
-
     if (novoEstado < 0 || novoEstado > 3) {
         printf("Estado inválido. Operação cancelada.\n");
         return;
+    }
 
-    }else if(novoEstado == 0){
-        printf("Paciente está de alta! Vamos tirar ele do Banco de Dados [...] \n");
+    if (novoEstado == 0) {
+        printf("Paciente está de alta! Removendo do Banco de Dados principal...\n");
         apagarPaciente("registroPaciente.txt", idParaAlterar);
 
         FILE *arquivo = fopen("registroAlta.txt", "a");
         if (!arquivo) {
-        perror("Erro ao abrir o arquivo para escrita");
-        return;
+            perror("Erro ao abrir o arquivo para escrita");
+            return;
         }
 
         fprintf(arquivo, "%s;%s;%s;%s;%d\n",
-            paciente.id,
-            paciente.nome,
-            paciente.cpf,
-            paciente.idMedico,
-            paciente.estado);
+                paciente.id,
+                paciente.nome,
+                paciente.cpf,
+                paciente.idMedico,
+                novoEstado);
 
         fclose(arquivo);
-        printf("Estado do paciente atualizado com sucesso!\n");
-        
+        printf("Paciente arquivado com sucesso!\n");
         return;
-
     }
+
+    // Atualiza estado do paciente
+    paciente.estado = novoEstado;
 
     apagarPaciente("registroPaciente.txt", idParaAlterar);
 
@@ -270,20 +269,33 @@ void relatorio() {
         return;
     }
 
-    int totalMedicos = 0;
-    int totalPacientes = 0;
+    Medico medicos[100];
+    int totalMedicos = carregarMedicos("registroMedico.txt", medicos, 100); // carrega médicos
 
-    listarMedicos("registroMedico.txt", arquivo, &totalMedicos);
-    listarPacientes("registroPaciente.txt", arquivo, &totalPacientes);
+    contarPacientesPorMedico(medicos, totalMedicos); // conta pacientes para cada médico
+
+    fprintf(arquivo, "\n===== PACIENTES POR MÉDICO =====\n");
+    for (int i = 0; i < totalMedicos; i++) {
+        fprintf(arquivo, "Médico %s (%s) - Total de Pacientes: %d\n",
+                medicos[i].id, medicos[i].nome, medicos[i].totalPacientes);
+    }
+
+    int totalPacientes = 0, totalAltas = 0, totalInternados = 0, totalModerados = 0, totalLeves = 0;
+
+    listarPacientes(arquivo, &totalPacientes);
+    ambulatorio(&totalAltas, &totalInternados, &totalModerados, &totalLeves);
 
     fprintf(arquivo,
         "\n===== RESUMO FINAL =====\n"
-        "Total de Médicos: %d\n"
-        "Total de Pacientes: %d\n",
-        totalMedicos, totalPacientes);
+        "Total de Medicos: %d\n"
+        "Total de Pacientes: %d\n"
+        "Total de Pacientes em Alta: %d\n"
+        "Total de Pacientes Internados: %d\n"
+        "Total de Pacientes em estado Moderado: %d\n"
+        "Total de Pacientes em estado Leve: %d\n",
+        totalMedicos, totalPacientes, totalAltas,
+        totalInternados, totalModerados, totalLeves);
 
     fclose(arquivo);
     printf("Relatório gerado com sucesso!\n");
 }
-
-

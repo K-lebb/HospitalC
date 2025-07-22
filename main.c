@@ -18,8 +18,7 @@ int main() {
     switch (opcaoAtendente) {
 
         case 0:
-            printf("Delisgando Sistema [...] \n");
-            return(0);
+            printf("Delisgando Sistema e gerando relatorio[...] \n");
 
             break;
 
